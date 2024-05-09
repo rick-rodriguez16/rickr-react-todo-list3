@@ -3,27 +3,53 @@ import React, { useState } from "react";
 //style
 import '../../styles/TodoHeader.css'
 
-
 const TodoHeader = ({todos, setTodos}) => {
-	const [newTask, setNewTask] = useState("")
-    const [idCounter, setIdCounter] = useState(0);
+	const [newTask, setNewTask] = useState("");
+    // removed the counterId since the playground 
+    // now creates the id for each todo
+
+    // we will use a regular function instead of a useEffect
+    // to post the new task so that we can call the function
+    const postNewTask = async (todoObject) => {
+        const options = {
+            method: 'POST',
+            body: JSON.stringify(todoObject),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        }
+
+        const response = await fetch('https://playground.4geeks.com/todo/todos/rickr', options)
+        if (response.ok) {
+            const data = await response.json();
+            return data;
+        } else {
+            console.log('Error: ', response.status, response.statusText);
+            return {
+                error: {
+                    status: response.status, 
+                    statusText: response.statusText
+                }
+            }
+        }
+    }
     
     const addTask = () => {
-        //console.log("Creating new task: ", newTask);
 
+        // rekeyed the todo object to correcly reflect on the playground
         let newTodoObject = {
-            id: idCounter,
-            title: newTask,
+            label: newTask,
+            is_done: false
         };
+        
+        // we still update todos here so that the state
+        // updates and the useEffect (in TodoBody) with 
+        // the fetch GET triggers
+        const newTodos = [...todos, newTodoObject];
+        setTodos(newTodos);
 
-        //console.log("new object:", newTodoObject);
-
-        // the ...todos, the dots are what we call the spread operator.
-        // The spread operator expands the array into its elements
-        // and then newTodoObject is added at the end of the array.
-        // It is a way to push into an array.
-        setTodos([...todos, newTodoObject]);
-        setIdCounter(idCounter + 1);
+        // here is the new function call to POST the new todo
+        postNewTask(newTodoObject);
     }
 
     const checkTextBox = () => {

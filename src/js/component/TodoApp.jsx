@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import TodoHeader from "./TodoHeader";
 import TodoBody from "./TodoBody";
 import TodoFooter from "./TodoFooter";
@@ -6,10 +6,9 @@ import TodoFooter from "./TodoFooter";
 //styles
 import '../../styles/TodoApp.css'
 
-
 const TodoApp = () => {
     const [todos, setTodos] = useState([]);
-    
+
 	return (
 		<>
             <div className="todos-wrapper">
